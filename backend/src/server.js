@@ -1,4 +1,6 @@
 // backend/src/server.js
+
+
 const express = require('express');
 const cors = require('cors');
 const knexfile = require('../knexfile');
@@ -9,7 +11,10 @@ app.use(express.json());
 app.use(cors());
 
 // --- ROTAS RÁPIDAS (Para P2 poder trabalhar) ---
-
+// 1. ROTA DE TESTE
+app.get('/', (req, res) => {
+  res.send('API do Controle de Despesas está RODANDO! 🚀');
+});
 // Renda
 app.get('/incomes', async (req, res) => {
     const incomes = await knex('incomes').select('*');
