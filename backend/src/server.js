@@ -104,5 +104,16 @@ app.post('/expenses', async (req, res) => {
     }
 });
 
-const PORT = 3001;
-app.listen(PORT, () => console.log(`✅ Servidor rodando em http://localhost:${PORT}`));
+// --- INICIALIZAÇÃO DO SERVIDOR ---
+
+// Só liga o servidor se o arquivo for executado diretamente (npm start)
+// Se for teste (Jest), ele ignora esse bloco e não trava o terminal.
+if (require.main === module) {
+    const PORT = 3001;
+    app.listen(PORT, () => {
+        console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
+    });
+}
+
+// Exporta o app para os testes conseguirem acessá-lo
+module.exports = app;
