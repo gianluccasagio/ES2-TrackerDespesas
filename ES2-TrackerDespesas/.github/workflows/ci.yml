@@ -1,0 +1,40 @@
+name: CI Pipeline (ES2)
+
+on:
+  push:
+    branches: [ "develop", "main" ]
+  pull_request:
+    branches: [ "develop", "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Baixa o código do repositório
+    - name: Checkout do código
+      uses: actions/checkout@v3
+
+    # 2. Instala o Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    # --- BACKEND (Onde estão os testes pesados) ---
+    - name: Instalar Dependências (Backend)
+      run: cd backend && npm install
+
+    - name: Rodar Migrations (Criar banco de teste em memória)
+      run: cd backend && npx knex migrate:latest
+
+    - name: Rodar Testes e Verificar Cobertura (Backend)
+      # O CI vai falhar se os testes não passarem
+      run: cd backend && npm test -- --coverage
+
+    # --- FRONTEND (Verificar se compila) ---
+    - name: Instalar Dependências (Frontend)
+      run: cd frontend && npm install
+
+    - name: Build do Frontend
+      run: cd frontend && npm run build
