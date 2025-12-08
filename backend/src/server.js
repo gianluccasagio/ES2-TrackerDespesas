@@ -104,16 +104,57 @@ app.post('/expenses', async (req, res) => {
     }
 });
 
+app.get('/reminders', async (req, res) => {
+  try {
+    const reminders = await knex('reminders').select('*');
+    res.json(reminders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/reminders', async (req, res) => {
+  try {
+    const { title, amount, due_date } = req.body;
+    await knex('reminders').insert({ title, amount, due_date });
+    res.status(201).send();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// --- 4. DESPESAS (Expenses) ---
+// Precisamos dessa rota para o teste de integração e para o Observer
+app.post('/expenses', async (req, res) => {
+  try {
+    const { description, amount, budget_id } = req.body;
+    
+    // (Opcional: Lógica do Observer aqui se P3 fez)
+    
+    await knex('expenses').insert({ description, amount, budget_id });
+    res.status(201).send();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/expenses', async (req, res) => {
+  const expenses = await knex('expenses').select('*');
+  res.json(expenses);
+});
+
 // --- INICIALIZAÇÃO DO SERVIDOR ---
 
 // Só liga o servidor se o arquivo for executado diretamente (npm start)
 // Se for teste (Jest), ele ignora esse bloco e não trava o terminal.
 if (require.main === module) {
-    const PORT = 3001;
-    app.listen(PORT, () => {
-        console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
-    });
+  const PORT = 3001;
+  app.listen(PORT, () => {
+    console.log(`------------------------------------------------`);
+    console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
+    console.log(`------------------------------------------------`);
+  });
 }
 
-// Exporta o app para os testes conseguirem acessá-lo
+// Exporta o app para que os testes consigam usar
 module.exports = app;
