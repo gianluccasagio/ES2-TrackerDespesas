@@ -1,0 +1,26 @@
+name: CI - Testes e Build
+
+on:
+  pull_request: # Roda a CI em todo PR para a 'develop'
+    branches:
+      - develop
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout (Baixar o código)
+        uses: actions/checkout@v3
+
+      - name: 2. Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18 # Usar Node 18
+
+      - name: 3. Instalar Dependências (Backend)
+        run: cd backend && npm install
+
+      - name: 4. Instalar Dependências (Frontend)
+        run: cd frontend && npm install
+
+      # (Por enquanto só instalamos. Os testes serão rodados na Semana 6)
